@@ -4,7 +4,7 @@ type Props = {}
 
 const HeroSection = (props: Props) => {
   return (
-    <div className="bg-slate-900 text-white container w-full flex px-5 py-24 items-center justify-center flex-col">
+    <div className="bg-slate-900 text-white w-full flex px-5 py-24 items-center justify-center flex-col">
        <div className="text-center lg:w-5/12 w-full">
          <h1 className="my-4 text-5xl font-bold leading-tight">
            Turn your ideas into reality
@@ -19,7 +19,7 @@ const HeroSection = (props: Props) => {
            </button>
            <button
              className="ml-4 hover:underline bg-white text-gray-800 font-bold rounded-full  py-4 px-8">
-             Get Started
+              <a href='/signup'>Get Started</a>
            </button>
          </div>
        </div>
