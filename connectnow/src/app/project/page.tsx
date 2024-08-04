@@ -17,7 +17,7 @@ const Project = (props: Props) => {
 
   return (
     <div className='bg-slate-900'>
-      <ComponentHeader />
+      <ComponentHeader isLoggedIn={true} route={'/project'} />
       <div className='pt-16 mb-4 '>
         <div>
           <div className='flex flex-row items-center justify-center gap-2'>

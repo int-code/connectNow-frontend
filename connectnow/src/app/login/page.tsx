@@ -61,6 +61,12 @@ export default function Login() {
   };
 
   useEffect(()=>{
+    const access_token = sessionStorage.getItem("access_token");
+    if(access_token){
+      // alert("You are already logged in!");
+      window.location.href="/dashboard";
+
+    }
     const submitData = async ()=>{
       if(isSubmitting){
         var formStyleData = new FormData();
@@ -86,6 +92,7 @@ export default function Login() {
           } else {
             console.log(data.access_token);
             sessionStorage.setItem("access_token", data.access_token);
+            sessionStorage.setItem("refresh_token", data.refresh_token);
             window.location.href = "/dashboard";
           }
         } catch (error) {
@@ -95,6 +102,7 @@ export default function Login() {
         }
       }
     };
+
     submitData();
   });
 

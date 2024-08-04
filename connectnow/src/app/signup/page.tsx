@@ -78,6 +78,15 @@ const Signup: React.FC<Props> = () => {
   };
 
   useEffect(() => {
+    const access_token = sessionStorage.getItem("access_token");
+    if(access_token){
+      alert("You are already logged in");
+      window.location.href = "/dashboard";
+    }
+  });
+
+
+  useEffect(() => {
     const submitData = async () => {
       if (isSubmitting) {
         setSignupText(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="w-6 h-6 animate-spin">
