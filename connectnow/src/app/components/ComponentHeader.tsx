@@ -22,20 +22,20 @@ const ComponentHeader: React.FC<Props> = (props: Props) => {
       </Navbar.Brand>
       <div className="flex md:order-2">
         {
-          props.isLoggedIn ? <Button onClick={handleLogout} className="text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg px-6 py-2">Log out</Button> :
+          props.isLoggedIn ? <Button onClick={handleLogout} className="text-white font-medium text-lg px-6 py-2">Log out</Button> :
           props.route == 'signup' ? 
           <>
             <Button className='mr-4 border-white border text-white font-medium text-lg px-6 py-2'>Sign up</Button>
-            <Button href="/login" className="text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg px-6 py-2">Log in</Button>
+            <Button href="/login" className="text-white  font-medium text-lg px-6 py-2">Log in</Button>
           </> :
           props.route == 'login' ?
           <>
-            <Button href="/signup" className="text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg px-6 py-2">Sign up</Button>
+            <Button href="/signup" className="text-white  font-medium text-lg px-6 py-2">Sign up</Button>
             <Button className='ml-4 border-white border text-white font-medium text-lg px-6 py-2'>Log in</Button>
           </> :
           <>
-            <Button href="/signup" className="text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg px-6 py-2">Sign up</Button>
-            <Button href='/login' className="ml-4 text-white bg-blue-600 hover:bg-blue-700 font-medium text-lg px-6 py-2">Log in</Button>
+            <Button href="/signup" className="text-white  font-medium text-lg px-6 py-2">Sign up</Button>
+            <Button href='/login' className="ml-4 text-white  font-medium text-lg px-6 py-2">Log in</Button>
           </>
           
         }
