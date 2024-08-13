@@ -1,9 +1,10 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ComponentHeader from '../components/ComponentHeader';
 import AppFooter from '../components/AppFooter';
 import ProjectCard from '../components/ProjectCard';
 import Modal from '../components/Modal';
+import { Dropdown } from 'flowbite-react';
 
 
 type Props = {}
@@ -15,12 +16,21 @@ const Project = (props: Props) => {
     setIsOpened(wasOpened => !wasOpened);
   }
 
+  useEffect(()=>{
+
+  });
+
   return (
     <div className='bg-slate-900'>
-      <ComponentHeader isLoggedIn={true} route={'/project'} />
-      <div className='pt-16 mb-4 '>
+      <div className='pt-20 mb-4 '>
         <div>
           <div className='flex flex-row items-center justify-center gap-2'>
+          <Dropdown label="Dropdown button" dismissOnClick={false}>
+            <Dropdown.Item>Dashboard</Dropdown.Item>
+            <Dropdown.Item>Settings</Dropdown.Item>
+            <Dropdown.Item>Earnings</Dropdown.Item>
+            <Dropdown.Item>Sign out</Dropdown.Item>
+          </Dropdown>
             <input type='text' placeholder='Search' className='w-1/2 m-4'/>
             <div onClick={setOpened}>
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="white" className="w-6 h-6 cursor-pointer">
@@ -30,12 +40,11 @@ const Project = (props: Props) => {
           </div>
         </div>
         <div className='grid grid-cols-4 gap-4 my-4 mx-8'>
-          <ProjectCard />
-          <ProjectCard />
-          <ProjectCard />
-          <ProjectCard />
-          <ProjectCard />
-          <ProjectCard />
+          <ProjectCard projectId={0} img={''} name={''} description={''} />
+          <ProjectCard projectId={0} img={''} name={''} description={''} />
+          <ProjectCard projectId={0} img={''} name={''} description={''} />
+          <ProjectCard projectId={0} img={''} name={''} description={''} />
+
 
         </div>
       </div>

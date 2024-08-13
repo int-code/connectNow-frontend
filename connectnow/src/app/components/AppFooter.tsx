@@ -5,7 +5,7 @@ type Props = {}
 
 const AppFooter = (props: Props) => {
   return (
-    <Footer container className='bg-slate-900 text-white rounded-none'>
+    <Footer container className='bg-slate-800 text-white rounded-none'>
       <FooterCopyright href="#" by="ConnectNow™" year={2024} />
       <FooterLinkGroup>
         <FooterLink href="#">About</FooterLink>

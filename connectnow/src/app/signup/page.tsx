@@ -1,4 +1,5 @@
 "use client";
+
 import React, { ChangeEvent, FormEvent, useEffect, useState } from 'react';
 import AppFooter from "../components/AppFooter";
 import ComponentHeader from "../components/ComponentHeader";
@@ -11,6 +12,7 @@ interface FormValues {
   email: string;
   password: string;
   confirmPassword: string;
+  verificationCode?: string;
 }
 
 interface FormErrors {
@@ -18,6 +20,7 @@ interface FormErrors {
   email?: string;
   password?: string;
   confirmPassword?: string;
+  verificationCode?: string;
 }
 
 const Signup: React.FC<Props> = () => {
@@ -26,12 +29,14 @@ const Signup: React.FC<Props> = () => {
     email: '',
     password: '',
     confirmPassword: '',
+    verificationCode: '',
   });
 
   const [signupText, setSignupText] = useState<string>("Sign up");
-
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+  const [isVerifying, setIsVerifying] = useState<boolean>(false);
+  const [isSignupComplete, setIsSignupComplete] = useState<boolean>(false);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -64,6 +69,10 @@ const Signup: React.FC<Props> = () => {
       errors.confirmPassword = 'Passwords must match';
     }
 
+    if (isVerifying && !values.verificationCode) {
+      errors.verificationCode = 'Verification code is required';
+    }
+
     return errors;
   };
 
@@ -73,18 +82,21 @@ const Signup: React.FC<Props> = () => {
     setFormErrors(errors);
 
     if (Object.keys(errors).length === 0) {
-      setIsSubmitting(true);
+      if (!isSignupComplete) {
+        setIsSubmitting(true);
+      } else {
+        setIsVerifying(true);
+      }
     }
   };
 
   useEffect(() => {
     const access_token = sessionStorage.getItem("access_token");
-    if(access_token){
+    if (access_token) {
       alert("You are already logged in");
       window.location.href = "/dashboard";
     }
-  });
-
+  }, []);
 
   useEffect(() => {
     const submitData = async () => {
@@ -106,19 +118,18 @@ const Signup: React.FC<Props> = () => {
           });
 
           const data = await response.json();
-          console.log('Response:', data);
-          if(response.status !== 200){
+          if (response.status !== 200) {
             let errors: FormErrors = {};
-            if(data.detail === "UserAlreadyExists"){
+            if (data.detail === "UserAlreadyExists") {
               errors.email = "Email already Registered. Please Log in";
-            } else if(data.detail === "UserNameTaken"){
+            } else if (data.detail === "UserNameTaken") {
               errors.username = "Username Taken. Please choose another";
-            } 
+            }
             setFormErrors(errors);
             alert("Sign up failed");
             setSignupText("Sign up");
           } else {
-            window.location.href = "/login";
+            setIsSignupComplete(true);
           }
         } catch (error) {
           console.error('Error submitting form:', error);
@@ -129,8 +140,44 @@ const Signup: React.FC<Props> = () => {
     };
 
     submitData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isSubmitting]);
+  }, [isSubmitting, formValues]);
+
+  useEffect(() => {
+    const verifyCode = async () => {
+      if (isVerifying) {
+        try {
+          const response = await fetch('http://127.0.0.1:8000/auth/verify', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              email: formValues.email,
+              code: formValues.verificationCode,
+              password: formValues.password,
+              username: formValues.username
+            }),
+          });
+
+          const data = await response.json();
+          if (response.status !== 200) {
+            let errors: FormErrors = {};
+            errors.verificationCode = "Invalid verification code";
+            setFormErrors(errors);
+            alert("Verification failed");
+          } else {
+            window.location.href = "/login";
+          }
+        } catch (error) {
+          console.error('Error verifying code:', error);
+        } finally {
+          setIsVerifying(false);
+        }
+      }
+    };
+
+    verifyCode();
+  }, [isVerifying, formValues]);
 
   const handleCheck = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
@@ -146,10 +193,9 @@ const Signup: React.FC<Props> = () => {
       });
 
       const data = await response.json();
-      console.log('Response:', data);
-      if(response.status !== 200){
+      if (response.status !== 200) {
         let errors: FormErrors = {};
-        if(data.detail === "UsernameTaken"){
+        if (data.detail === "UsernameTaken") {
           errors.username = "Username taken, please choose another";
           setFormErrors(errors);
         }
@@ -165,89 +211,116 @@ const Signup: React.FC<Props> = () => {
 
   return (
     <div>
-      <ComponentHeader isLoggedIn={false} route='login'/>
       <div className="flex flex-row bg-slate-900 text-white">
         <img src="pattern.svg" className="w-1/2 rounded" alt="Pattern" />
-        <main className="flex w-1/2 min-h-screen flex-col items-center justify-center p-24">
-          <div className="flex flex-row">
-            <div className="border bg-sky-50 bg-opacity-10 px-12 pt-4 pb-8 rounded">
-              <div className="inknut-antiqua-bold text-7xl text-center text-sky-300">
-                Sign up
-              </div>
-              <div className="flex flex-col mt-28 gap-2">
-                <form onSubmit={handleSubmit}>
-                  <div>
+        <main className="flex w-1/2 min-h-screen flex-col items-center justify-center p-6 mx-auto bg-slate-900 rounded-lg shadow-lg">
+          <div className="w-full max-w-md">
+            <div className="text-4xl text-center text-sky-300 font-bold mb-8">
+              {isSignupComplete ? 'Verify Email' : 'Sign Up'}
+            </div>
+            {!isSignupComplete ? (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <input
+                    type="email"
+                    placeholder="Enter email"
+                    className="w-full bg-sky-100 text-black p-3 rounded"
+                    onChange={handleChange}
+                    value={formValues.email}
+                    name="email"
+                  />
+                  {formErrors.email && (
+                    <div className="text-red-500 text-sm mt-1">{formErrors.email}</div>
+                  )}
+                </div>
+                <div>
+                  <div className='flex items-center'>
                     <input
-                      type="email"
-                      placeholder="Enter email"
-                      className="bg-sky-100 text-black w-full"
+                      type="text"
+                      placeholder="Enter username"
+                      className="bg-sky-100 text-black p-3 rounded w-4/5"
                       onChange={handleChange}
-                      value={formValues.email}
-                      name="email"
+                      value={formValues.username}
+                      name="username"
                     />
-                    {formErrors.email && (
-                      <div className="text-red-500 text-sm">{formErrors.email}</div>
-                    )}
-                  </div>
-                  <div>
-                    <div className='flex flex-row'>
-                      <input
-                        type="text"
-                        placeholder="Enter username"
-                        className="bg-sky-100 text-black w-4/5"
-                        onChange={handleChange}
-                        value={formValues.username}
-                        name="username"
-                      />
-                      <button className='bg-sky-300 rounded p-1 w-1/5' onClick={handleCheck}>Check</button>
-                    </div>
-                    {formErrors.username && (
-                      <div className="text-red-500 text-sm">{formErrors.username}</div>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="password"
-                      placeholder="Enter password"
-                      className="bg-sky-100 text-black w-full"
-                      onChange={handleChange}
-                      value={formValues.password}
-                      name="password"
-                    />
-                    {formErrors.password && (
-                      <div className="text-red-500 text-sm">{formErrors.password}</div>
-                    )}
-                  </div>
-                  <div>
-                    <input
-                      type="password"
-                      placeholder="Re-enter password"
-                      className="bg-sky-100 text-black w-full"
-                      onChange={handleChange}
-                      value={formValues.confirmPassword}
-                      name="confirmPassword"
-                    />
-                    {formErrors.confirmPassword && (
-                      <div className="text-red-500 text-sm">{formErrors.confirmPassword}</div>
-                    )}
-                  </div>
-                  <div className='flex w-full justify-center items-center mt-4'>
                     <button
-                      type='submit'
-                      className='bg-sky-300 hover:shadow-lg text-white p-4 rounded'
-                      disabled={isSubmitting}  // Disable button while submitting
+                      className='bg-sky-300 rounded p-3 w-1/5 ml-2 text-white'
+                      onClick={handleCheck}
                     >
-                      {isSubmitting ? <Loader htmlContent={signupText} /> : 'Sign Up'}
+                      Check
                     </button>
                   </div>
-                </form>
-              </div>
-              <div className="text-sm mt-4">
-                Already have an account?{' '}
-                <span className="hover:text-sky-300 cursor-pointer">
-                  <a href="/login">Log in</a>
-                </span>
-              </div>
+                  {formErrors.username && (
+                    <div className="text-red-500 text-sm mt-1">{formErrors.username}</div>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Enter password"
+                    className="w-full bg-sky-100 text-black p-3 rounded"
+                    onChange={handleChange}
+                    value={formValues.password}
+                    name="password"
+                  />
+                  {formErrors.password && (
+                    <div className="text-red-500 text-sm mt-1">{formErrors.password}</div>
+                  )}
+                </div>
+                <div>
+                  <input
+                    type="password"
+                    placeholder="Re-enter password"
+                    className="w-full bg-sky-100 text-black p-3 rounded"
+                    onChange={handleChange}
+                    value={formValues.confirmPassword}
+                    name="confirmPassword"
+                  />
+                  {formErrors.confirmPassword && (
+                    <div className="text-red-500 text-sm mt-1">{formErrors.confirmPassword}</div>
+                  )}
+                </div>
+                <div className="flex w-full justify-center items-center mt-6">
+                  <button
+                    type='submit'
+                    className='bg-sky-300 hover:shadow-lg text-white p-4 rounded'
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? <Loader htmlContent={signupText} /> : 'Sign Up'}
+                  </button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div>
+                  <input
+                    type="text"
+                    placeholder="Enter verification code"
+                    className="w-full bg-sky-100 text-black p-3 rounded"
+                    onChange={handleChange}
+                    value={formValues.verificationCode}
+                    name="verificationCode"
+                  />
+                  {formErrors.verificationCode && (
+                    <div className="text-red-500 text-sm mt-1">{formErrors.verificationCode}</div>
+                  )}
+                </div>
+                <div className="flex w-full justify-center items-center mt-6">
+                  <button
+                    type='submit'
+                    className='bg-sky-300 hover:shadow-lg text-white p-4 rounded'
+                    disabled={isVerifying}
+                  >
+                    {isVerifying ? <Loader htmlContent={"Verifying..."} /> : 'Verify'}
+                  </button>
+                </div>
+              </form>
+            )}
+            <div className="text-sm text-center mt-4">
+              Already have an account?{' '}
+              <a href="/login" className="text-sky-300 hover:underline">
+                Log in
+              </a>
             </div>
           </div>
         </main>

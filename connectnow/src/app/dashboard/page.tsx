@@ -6,6 +6,7 @@ import ComponentHeader from "../components/ComponentHeader";
 import PageLoader from "../components/PageLoader";
 import { Button, Checkbox, Label, Modal, TextInput, FileInput, Textarea } from "flowbite-react"
 import ProjectCard from "../components/ProjectCard";
+import Layout from "../components/Layout";
 
 interface Project {
   id: number;
@@ -182,11 +183,10 @@ export default function Dashboard() {
 
   return (
     <div>
-      <ComponentHeader route="dashboard" isLoggedIn={true} />
       {isLoading ? (
         <PageLoader />
       ) : (
-        <div className="pt-16 h-auto">
+        <div className="pt-16 h-auto bg-slate-900 text-white">
           <Modal show={openModal} size="md" onClose={onCloseModal} popup size="5xl">
             <Modal.Header />
             <Modal.Body>
@@ -265,42 +265,120 @@ export default function Dashboard() {
             </Modal.Body>
           </Modal>
           <div className="text-4xl p-10">Welcome <span className="hover:text-blue-800 cursor-pointer" onClick={(event: React.MouseEvent<HTMLSpanElement>)=>{window.location.href=`http://localhost:3000/user`;}}>{userName}</span>!</div>
-          <hr />
-          <div>
-            <div className="grid grid-cols-12 my-10 mx-10">
-              <div className="col-span-11 text-left text-2xl">Your Projects</div>
-              <Button className="col-span-1" onClick={handleAddProject}>Create New</Button>
+          <hr className="border-slate-700"/>
+          <div className="pb-10">
+            {userInfo.owned.length == 0?
+              userInfo.member.length == 0?
+              <div className="flex flex-row gap-4 justify-center items-center ">
+                <div className="flex items-center justify-center h-full">
+                  <div className="p-6 bg-gradient-to-b from-sky-900 to-slate-900 text-white rounded-lg shadow-lg text-center">
+                    <div className="text-2xl font-bold mb-2">You have no owned projects yet.</div>
+                    <div className="text-lg mb-4">Create one now!</div>
+                    <button onClick={handleAddProject} className="bg-white text-sky-500 hover:text-white hover:bg-sky-600 transition duration-300 ease-in-out py-2 px-4 rounded-lg font-semibold">
+                      Create Project
+                    </button>
+                  </div>
+                </div>
+                <div className="flex items-center justify-center h-full">
+                  <div className="p-6 bg-gradient-to-b from-sky-900 to-slate-900 text-white rounded-lg shadow-lg text-center">
+                    <div className="text-2xl font-bold mb-2">You have no member projects yet.</div>
+                    <div className="text-lg mb-4">Join one now!</div>
+                    <button onClick={()=> window.location.href="/project"} className="bg-white text-sky-500 hover:text-white hover:bg-sky-600 transition duration-300 ease-in-out py-2 px-4 rounded-lg font-semibold">
+                      Browse Projects
+                    </button>
+                  </div>
+                </div>
+              </div>:
+              <div>
+                <div className="flex items-center justify-center h-full">
+                  <div className="p-6 bg-gradient-to-b from-sky-900 to-slate-900 text-white rounded-lg shadow-lg text-center">
+                    <div className="text-2xl font-bold mb-2">You have no owned projects yet.</div>
+                    <div className="text-lg mb-4">Create one now!</div>
+                    <button onClick={handleAddProject} className="bg-white text-sky-500 hover:text-white hover:bg-sky-600 transition duration-300 ease-in-out py-2 px-4 rounded-lg font-semibold">
+                      Create Project
+                    </button>
+                  </div>
+                </div>
+                <div className="grid grid-cols-12 my-10 mx-10">
+                <div className="col-span-11 text-left text-2xl">Your Memberships</div>
+              </div>
+              <div className="grid grid-cols-5 gap-4 mt-10">
+                {/* Render owned projects */}
+                {userInfo &&  userInfo.member.map((project) => (
+                  <ProjectCard
+                    projectId={project.id}
+                    key={project.id}
+                    img={project.pic_url || ""}
+                    name={project.name}
+                    description={project.description || ""}
+                  />
+                ))}
+              </div>
+              </div>:
+            userInfo.member.length == 0?
+            <div>
+              <div className="grid grid-cols-12 my-10 mx-10">
+                <div className="col-span-11 text-left text-2xl">Your Projects</div>
+                <Button className="col-span-1" onClick={handleAddProject}>Create New</Button>
+              </div>
+              <div className="grid grid-cols-5 gap-4 mt-10">
+                {/* Render owned projects */}
+                {userInfo && userInfo.owned.map((project) => (
+                  <ProjectCard
+                    projectId={project.id}
+                    key={project.id}
+                    img={project.pic_url || ""}
+                    name={project.name}
+                    description={project.description || ""}
+                  />
+                ))}
+              </div>
+              <div className="flex items-center justify-center h-full">
+                <div className="p-6 bg-gradient-to-b from-sky-900 to-slate-900 text-white rounded-lg shadow-lg text-center">
+                  <div className="text-2xl font-bold mb-2">You have no member projects yet.</div>
+                  <div className="text-lg mb-4">Join one now!</div>
+                  <button className="bg-white text-sky-500 hover:text-white hover:bg-sky-600 transition duration-300 ease-in-out py-2 px-4 rounded-lg font-semibold">
+                    Browse Projects
+                  </button>
+                </div>
+              </div>
+            </div>:
+            <div>
+              <div className="grid grid-cols-12 my-10 mx-10">
+                <div className="col-span-11 text-left text-2xl">Your Projects</div>
+                <Button className="col-span-1" onClick={handleAddProject}>Create New</Button>
+              </div>
+              <div className="grid grid-cols-5 gap-4 mt-10">
+                {/* Render owned projects */}
+                {userInfo && userInfo.owned.map((project) => (
+                  <ProjectCard
+                    projectId={project.id}
+                    key={project.id}
+                    img={project.pic_url || ""}
+                    name={project.name}
+                    description={project.description || ""}
+                  />
+                ))}
+              </div>
+              <div className="grid grid-cols-12 my-10 mx-10">
+                <div className="col-span-11 text-left text-2xl">Your Memberships</div>
+              </div>
+              <div className="grid grid-cols-5 gap-4 mt-10">
+                {/* Render owned projects */}
+                {userInfo &&  userInfo.member.map((project) => (
+                  <ProjectCard
+                    projectId={project.id}
+                    key={project.id}
+                    img={project.pic_url || ""}
+                    name={project.name}
+                    description={project.description || ""}
+                  />
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-5 gap-4 m-10">
-              {/* Render owned projects */}
-              {userInfo && userInfo.owned.map((project) => (
-                <ProjectCard
-                  projectId={project.id}
-                  key={project.id}
-                  img={project.pic_url || ""}
-                  name={project.name}
-                  description={project.description || ""}
-                />
-              ))}
-            </div>
+          }
           </div>
-          <div>
-            <div className="grid grid-cols-12 my-10 mx-10">
-              <div className="col-span-11 text-left text-2xl">Your Memberships</div>
-            </div>
-            <div className="grid grid-cols-5 gap-4 m-10">
-              {/* Render owned projects */}
-              {userInfo &&  userInfo.member.map((project) => (
-                <ProjectCard
-                  projectId={project.id}
-                  key={project.id}
-                  img={project.pic_url || ""}
-                  name={project.name}
-                  description={project.description || ""}
-                />
-              ))}
-            </div>
-          </div>
+          
           
         </div>
       )}
