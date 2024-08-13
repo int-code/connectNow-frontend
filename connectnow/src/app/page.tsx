@@ -9,7 +9,6 @@ export default function Home() {
   return (
     <div className="min-h-screen w-full">
       <AppHeader />
-      <Navigation />
       <MainPageCaraousal />
       <HeroSection />
       <AppFooter />

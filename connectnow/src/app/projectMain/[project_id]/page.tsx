@@ -92,6 +92,9 @@ const ProjectPage: React.FC = () => {
   const [deleteConfirmText, setDeleteConfirmText] = useState<string>("");
   const [isDeleteLoading, setisDeleteLoading] = useState<boolean>(false);
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [searchText, setSearchText] = useState<string>("");
+  const [searchResults, setSearchResults] = useState<Member[]>([]);
+  const [showSearchResults, setShowSearchResults] = useState<boolean>(false);
 
   const handleSubmitSettings = (event: React.MouseEvent<HTMLButtonElement>) => {
     if(isSettingsLoading)
@@ -186,6 +189,117 @@ const ProjectPage: React.FC = () => {
     setShowDeleteConfirm(true);
   }
 
+
+  const handleRevokePermissions = (event: React.MouseEvent<HTMLDivElement>)=>{
+    const id = parseInt(event.currentTarget.id.split("-")[0]);
+    const fetchData = async () =>{
+      const response = await fetch('http://127.0.0.1:8000/members', {
+        method: "PUT",
+        headers: {
+          "access-token": `${sessionStorage.getItem("access_token")}`
+        },
+        body: JSON.stringify({
+          project_id: project_id,
+          user_id: id,
+          role: "member"
+        })
+      });
+      const responseBody = await response.json();
+      if(response.ok){
+        alert("Successfully updated");
+      }
+      else{
+        alert("Failed to update");
+      }
+    };
+    fetchData();
+  }
+
+  const handlePromotePermissions = (event: React.MouseEvent<HTMLDivElement>)=>{
+    const id = parseInt(event.currentTarget.id.split("-")[0]);
+    const fetchData = async () =>{
+      const response = await fetch('http://127.0.0.1:8000/members', {
+        method: "PUT",
+        headers: {
+          "access-token": `${sessionStorage.getItem("access_token")}`
+        },
+        body: JSON.stringify({
+          project_id: project_id,
+          user_id: id,
+          role: "admin"
+        })
+      });
+      const responseBody = await response.json();
+      if(response.ok){
+        alert("Successfully updated");
+      }
+      else{
+        alert("Failed to update");
+      }
+    };
+    fetchData();
+  }
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setSearchText(value);
+    setShowSearchResults(value.length > 0);
+  
+    if (value) {
+      const fetchData = async () => {
+        try {
+          const response = await fetch(`http://127.0.0.1:8000/user/search/${value}`, {
+            headers: {
+              "access-token": `${sessionStorage.getItem("access_token")}`
+            }
+          });
+          if (response.ok) {
+            const responseBody = await response.json();
+            if (Array.isArray(responseBody)) {
+              setSearchResults(responseBody.slice(0, 5));
+            } else {
+              console.error("Unexpected response format:", responseBody);
+              setSearchResults([]);
+            }
+          } else {
+            console.error("Search request failed:", response.status);
+            setSearchResults([]);
+          }
+        } catch (error) {
+          console.error("Error fetching search results:", error);
+          setSearchResults([]);
+        }
+      };
+      fetchData();
+    } else {
+      setSearchResults([]);
+    }
+  };
+
+  const handleRemoveUser = (event: React.MouseEvent<HTMLDivElement>)=>{
+    const id = parseInt(event.currentTarget.id.split("-")[0]);
+    const fetchData = async () =>{
+      const response = await fetch('http://127.0.0.1:8000/members', {
+        method: "DELETE",
+        headers: {
+          "access-token": `${sessionStorage.getItem("access_token")}`
+        },
+        body: JSON.stringify({
+          project_id: project_id,
+          user_id: id,
+          role: "admin"
+        })
+      });
+      const responseBody = await response.json();
+      if(response.ok){
+        alert("Successfully updated");
+      }
+      else{
+        alert("Failed to update");
+      }
+    };
+    fetchData();
+  }
 
   function getUserTimezone() {
     const options: Intl.DateTimeFormatOptions = { timeZoneName: 'short' };
@@ -433,50 +547,119 @@ const ProjectPage: React.FC = () => {
             </div>}
             </Tabs.Item>
             <Tabs.Item title="Permissions">
-              <div>
-                <div className='flex flex-row gap-4 items-center my-4 justify-between'>
-                  <div className='flex flex-row justify-center items-center gap-6'>
-                    <div className=''>
-                      <img src={data.owner.profile_pic} className='object-cover rounded-full w-10 h-10'></img>
-                    </div>
-                    <div>@ {data.owner.username}</div>
-                  </div>
-                  <div className='bg-slate-800 text-white p-2 rounded'> Owner</div>
-                </div>
-                <hr />
-                  {data.admins.map((admin)=>(
-                    <div className='flex flex-row gap-4 items-center my-4 justify-between'>
-                      <div className='flex flex-row justify-center items-center gap-6'>
-                        <div className=''>
-                          <img src={admin.profile_pic} className='object-cover w-10 h-10 rounded-full'></img>
+            <div>
+              <div className='m-2'>Add User</div>
+              <div className='flex flex-col mb-10'>
+              <div className="relative mb-10">
+                <input
+                  type="text"
+                  placeholder="Search users"
+                  className="w-full p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  onChange={handleSearchChange}
+                  value={searchText}
+                />
+                {showSearchResults && searchResults.length > 0 && (
+                  <div className="absolute top-full left-0 w-full mt-1 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+                    {searchResults.map((result) => (
+                      <div
+                        key={result.id}
+                        className="p-2 hover:bg-gray-100 cursor-pointer"
+                        onClick={() => {
+                          // Handle user selection here
+                          console.log("Selected user:", result);
+                          setSearchText("");
+                          setShowSearchResults(false);
+                        }}
+                      >
+                        <div className="flex items-center">
+                          <img
+                            src={result.profile_pic || 'default_avatar_url'}
+                            alt={`${result.username}'s avatar`}
+                            className="w-8 h-8 rounded-full mr-2"
+                          />
+                          <div>
+                            <div className="font-semibold">{result.username}</div>
+                            <div className="text-sm text-gray-600">{result.name}</div>
+                          </div>
                         </div>
-                        <div>@ {admin.username}</div>
-                      </div>  
-                      <div className='bg-slate-600 text-white p-2 rounded'> Admin</div>
-                      <div className='text-red-600 font-bold'>Revoke</div>
-                      <hr />
-                    </div>
-                  ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
-              <div>
-                {data.members.map((member)=>(
+              </div>
+              <div className='flex flex-row gap-4 items-center my-4 justify-between'>
+                <div className='flex flex-row justify-center items-center gap-6'>
                   <div>
+                    <img
+                      src={data.owner.profile_pic}
+                      className='object-cover rounded-full w-10 h-10'
+                    />
+                  </div>
+                  <div>@ {data.owner.username}</div>
+                </div>
+                <div className='bg-slate-800 text-white p-2 rounded'>Owner</div>
+              </div>
+              <hr />
+              {data.admins.map((admin) => (
+                <div className='flex flex-row gap-4 items-center my-4 justify-between' key={admin.id}>
+                  <div className='flex flex-row justify-center items-center gap-6'>
+                    <div>
+                      <img
+                        src={admin.profile_pic}
+                        className='object-cover w-10 h-10 rounded-full'
+                      />
+                    </div>
+                    <div>@ {admin.username}</div>
+                  </div>
+                  <div className='bg-slate-600 text-white p-2 rounded'>Admin</div>
+                  <div
+                    className='text-red-600 font-bold'
+                    onClick={handleRevokePermissions}
+                    id={admin.id.toString() + '-revoke'}
+                  >
+                    Revoke
+                  </div>
+                  <div className='text-red-600 font-bold'>Remove</div>
+                  <hr />
+                </div>
+              ))}
+              <div>
+                {data.members.map((member) => (
+                  <div key={member.id}>
                     <div className='flex flex-row gap-4 items-center my-4 justify-between'>
                       <div className='flex flex-row gap-6 items-center'>
                         <div className='w-10 h-10 rounded-full'>
-                          <img src={member.profile_pic} className='object-cover'></img>
+                          <img src={member.profile_pic} className='object-cover' />
                         </div>
                         <div>@ {member.username}</div>
                       </div>
                       <div className='flex flex-row gap-6 items-center'>
-                        <div className='bg-slate-400 text-white p-2 rounded'> Member</div>
-                        <div className='text-red-600 font-bold'>Promote</div>
+                        <div className='bg-slate-400 text-white p-2 rounded'>
+                          Member
+                        </div>
+                        <div
+                          className='text-red-600 font-bold'
+                          onClick={handlePromotePermissions}
+                          id={member.id + '-promote'}
+                        >
+                          Promote
+                        </div>
+                        <div
+                          className='text-red-600 font-bold'
+                          onClick={handleRemoveUser}
+                          id={member.id + '-remove'}
+                        >
+                          Remove
+                        </div>
                       </div>
                     </div>
                     <hr />
-                  </div> 
+                  </div>
                 ))}
               </div>
+            </div>
+
             </Tabs.Item>
           </Tabs>
         </Modal.Body>
