@@ -187,7 +187,7 @@ export default function Dashboard() {
         <PageLoader />
       ) : (
         <div className="pt-16 h-auto bg-slate-900 text-white">
-          <Modal show={openModal} size="md" onClose={onCloseModal} popup size="5xl">
+          <Modal show={openModal} onClose={onCloseModal} popup size="md">
             <Modal.Header />
             <Modal.Body>
               <div className="space-y-6">

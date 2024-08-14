@@ -22,7 +22,7 @@ interface Project {
 interface Member {
   id: number;
   email: string;
-  profile_pic: string | null;
+  profile_pic: string;
   profile_pic_path: string | null;
   created_at: string;
   bio: string | null;
@@ -79,7 +79,7 @@ interface Settings {
 }
 
 const ProjectPage: React.FC = () => {
-  const { project_id } = useParams();
+  const { project_id } = useParams<{ project_id: string }>();
   console.log(project_id);
   const [data, setData] = useState<ProjectData>({
     project: {
@@ -474,7 +474,7 @@ const ProjectPage: React.FC = () => {
   );
   if(data.isMember == "not-member") return (
     <div>
-      <ComponentHeader isLoggedIn={true} route={'/projectMain'} />
+      <ComponentHeader route={'/projectMain'} />
       <div className='pt-16 grid grid-cols-12 gap-8 min-h-screen bg-slate-900 text-white'>
         <div className='col-span-8'>
           <div className='w-full h-72 p-10'>
@@ -562,13 +562,15 @@ const ProjectPage: React.FC = () => {
                 <div className="mb-2 block">
                   <Label htmlFor="description" value="Description" />
                 </div>
+                {settingsForm && settingsForm.projectDesc && 
                 <TextInput
-                  placeholder="Enter Description"
-                  value={settingsForm?.projectDesc}
-                  onChange={handleSettingsChange}
-                  required
-                  name="projectDesc"
-                />
+                placeholder="Enter Description"
+                value={settingsForm.projectDesc}
+                onChange={handleSettingsChange}
+                required
+                name="projectDesc"
+              />}
+                
               </div>
               <div>
               <div className="mb-2 block">
@@ -618,7 +620,7 @@ const ProjectPage: React.FC = () => {
             <div>
               Are you sure you want to delete this project? This action is irreversible.
               <br />
-              Type "<span className='font-bold'>{data.project.name}</span>" to delete it
+              Type &quot;<span className='font-bold'>{data.project.name}</span>&quot; to delete it
               <div className='flex flex-row gap-4 w-full justify-center items-center pt-4'>
                 <TextInput
                 value={deleteConfirmText}

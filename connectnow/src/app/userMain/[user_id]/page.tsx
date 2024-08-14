@@ -11,7 +11,7 @@ interface Project {
   description: string | null;
   admin_id: number;
   id: number;
-  pic_url: string | null;
+  pic_url: string;
   status: string;
   name: string;
   pic_path: string;
@@ -257,7 +257,7 @@ const ProjectPage: React.FC = () => {
               <div className='grid grid-cols-5 gap-4 pt-4'>
                 { userProject?.owned ? (
                 userProject?.owned.map((project)=>(
-                  <ProjectCard projectId={project.id} img={project.pic_url} name={project.name} description={project.description || ""} />
+                  <ProjectCard key={project.id} projectId={project.id} img={project.pic_url} name={project.name} description={project.description || ""} />
                 ))):
                 (
                   <p>No owned projects available.</p>
@@ -270,7 +270,7 @@ const ProjectPage: React.FC = () => {
             </div>
               <div className='grid grid-cols-5 gap-4 pt-4'>
                 {userProject?.member.map((project)=>(
-                  <ProjectCard projectId={project.id} img={project.pic_url} name={project.name} description={project.description || ""} />
+                  <ProjectCard key={project.id} projectId={project.id} img={project.pic_url} name={project.name} description={project.description || ""} />
                 ))}
               </div>
           </div>

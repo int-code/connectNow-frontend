@@ -22,11 +22,11 @@ const UserDetailsPage: React.FC = () => {
     username: 'johndoe',
     email: 'john@doe.com'
   });
-  const access_token = sessionStorage.getItem("access_token");
-  if(!access_token)
-    window.location.href = "/login";
   
   useEffect(() => {
+    const access_token = sessionStorage.getItem("access_token");
+    if(!access_token)
+      window.location.href = "/login";
     const fetchUserDetails = async () =>{
       const response = await fetch("http://152.42.222.73/api/connectnow/user", {
         headers:{
@@ -61,7 +61,7 @@ const UserDetailsPage: React.FC = () => {
         const response = await fetch("http://152.42.222.73/api/connectnow/user", {
           method: "DELETE",
           headers: {
-            "access-token": `${access_token}`,
+            "access-token": `${sessionStorage.getItem("access_token")}`,
           }
         })
       };
