@@ -25,7 +25,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const fetchUser = async () => {
       const token = sessionStorage.getItem('access_token');
       if (token) {
-        const response = await fetch('http://127.0.0.1:8000/user/', {
+        const response = await fetch('http://152.42.222.73/api/connectnow/user/', {
           headers: {
             "access-token": `${token}`,
           },

@@ -70,7 +70,7 @@ export default function Dashboard() {
       formData.append("description", projectDesc);
     if(projectPic)
       formData.append("pic", projectPic);
-    fetch("http://127.0.0.1:8000/project", {
+    fetch("http://152.42.222.73/api/connectnow/project", {
       method: "POST",
       headers: {
         "access-token": `${access_token}`,
@@ -80,12 +80,12 @@ export default function Dashboard() {
     .then((response) => {
       if(response.status==401){
         const refresh_token = sessionStorage.getItem("refresh_token");
-        fetch(`http://127.0.0.1:8000/auth/refresh/?refresh_token=${refresh_token}`, {
+        fetch(`http://152.42.222.73/api/connectnow/auth/refresh/?refresh_token=${refresh_token}`, {
           method: "POST"
         }).then((response)=> response.json())
         .then((data) =>{
           sessionStorage.setItem("access_token", data.access_token);
-          fetch("http://127.0.0.1:8000/project", {
+          fetch("http://152.42.222.73/api/connectnow/project", {
             method: "POST",
             headers: {
               "access-token": `${data.access_token}`,
@@ -117,7 +117,7 @@ export default function Dashboard() {
       window.location.href = "/";
     } else {
       // Fetch user info
-      fetch("http://127.0.0.1:8000/project/me", {
+      fetch("http://152.42.222.73/api/connectnow/project/me", {
         headers: {
           "access-token": `${access_token}`,
         },
@@ -125,12 +125,12 @@ export default function Dashboard() {
         .then((response) =>{
           if(response.status==401){
             const refresh_token = sessionStorage.getItem("refresh_token");
-            fetch(`http://127.0.0.1:8000/auth/refresh/?refresh_token=${refresh_token}`, {
+            fetch(`http://152.42.222.73/api/connectnow/auth/refresh/?refresh_token=${refresh_token}`, {
               method: "POST"
             }).then((response)=> response.json())
             .then((data) =>{
               sessionStorage.setItem("access_token", data.access_token);
-              fetch("http://127.0.0.1:8000/project/me", {
+              fetch("http://152.42.222.73/api/connectnow/project/me", {
                 headers: {
                   "access-token": `${access_token}`,
                 },
@@ -154,7 +154,7 @@ export default function Dashboard() {
     }
     const fetchData = async () => {
       try{
-        const response = await fetch("http://127.0.0.1:8000/user", {
+        const response = await fetch("http://152.42.222.73/api/connectnow/user", {
           headers:{
             "access-token": `${access_token}`
           }

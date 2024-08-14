@@ -28,7 +28,7 @@ const UserDetailsPage: React.FC = () => {
   
   useEffect(() => {
     const fetchUserDetails = async () =>{
-      const response = await fetch("http://127.0.0.1:8000/user", {
+      const response = await fetch("http://152.42.222.73/api/connectnow/user", {
         headers:{
           "access-token": `${access_token}`,
         }
@@ -58,7 +58,7 @@ const UserDetailsPage: React.FC = () => {
   const handleDeleteAccount = () => {
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       const deleteAccount = async ()=>{
-        const response = await fetch("http://127.0.0.1:8000/user", {
+        const response = await fetch("http://152.42.222.73/api/connectnow/user", {
           method: "DELETE",
           headers: {
             "access-token": `${access_token}`,
