@@ -81,7 +81,35 @@ interface Settings {
 const ProjectPage: React.FC = () => {
   const { project_id } = useParams();
   console.log(project_id);
-  const [data, setData] = useState<ProjectData | null>(null);
+  const [data, setData] = useState<ProjectData>({
+    project: {
+      id: 0,
+      admin_id: 0,
+      name: "Loading",
+      description: "Loading",
+      pic_url: "Loading",
+      pic_path: "Loading",
+      status: "Loading",
+      created_at: "2024-08-14T15:30:00"
+    },
+    members:[],
+    interests:[],
+    isMember:'not-member',
+    skills:[],
+    owner:{
+      id: 0,
+      email: "Loading",
+      profile_pic: "Loading",
+      profile_pic_path: "Loading",
+      created_at: "2024-08-14T15:30:00",
+      bio: "Loading",
+      password: "Loading",
+      name: "Loading",
+      username: "Loading"
+    },
+    admins:[],
+    hasInterest:false
+  });
   const [loading, setLoading] = useState<boolean>(true);
   const [settingView, setSettingView] = useState<boolean>(false);
   const [settingsForm, setSettingsForm] = useState<Settings | null>(null);
@@ -192,10 +220,12 @@ const ProjectPage: React.FC = () => {
 
   const handleRevokePermissions = (event: React.MouseEvent<HTMLDivElement>)=>{
     const id = parseInt(event.currentTarget.id.split("-")[0]);
+    const index = parseInt(event.currentTarget.id.split("-")[1]);
     const fetchData = async () =>{
       const response = await fetch('http://127.0.0.1:8000/members', {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           "access-token": `${sessionStorage.getItem("access_token")}`
         },
         body: JSON.stringify({
@@ -207,6 +237,11 @@ const ProjectPage: React.FC = () => {
       const responseBody = await response.json();
       if(response.ok){
         alert("Successfully updated");
+        setData((prevData) => ({
+          ...prevData,
+          admins: prevData.admins.filter((m,idx) => idx !== index),
+          members: [...prevData.members, data.admins[index]],
+        }));
       }
       else{
         alert("Failed to update");
@@ -217,14 +252,16 @@ const ProjectPage: React.FC = () => {
 
   const handlePromotePermissions = (event: React.MouseEvent<HTMLDivElement>)=>{
     const id = parseInt(event.currentTarget.id.split("-")[0]);
+    const index = parseInt(event.currentTarget.id.split("-")[1]);
     const fetchData = async () =>{
       const response = await fetch('http://127.0.0.1:8000/members', {
         method: "PUT",
         headers: {
+          "Content-Type": "application/json",
           "access-token": `${sessionStorage.getItem("access_token")}`
         },
         body: JSON.stringify({
-          project_id: project_id,
+          project_id: parseInt(project_id),
           user_id: id,
           role: "admin"
         })
@@ -232,6 +269,11 @@ const ProjectPage: React.FC = () => {
       const responseBody = await response.json();
       if(response.ok){
         alert("Successfully updated");
+        setData((prevData) => ({
+          ...prevData,
+          admins: [...prevData.admins, data.members[index]],
+          members: prevData.members.filter((m,idx) => idx !== index),
+        }));
       }
       else{
         alert("Failed to update");
@@ -278,10 +320,12 @@ const ProjectPage: React.FC = () => {
 
   const handleRemoveUser = (event: React.MouseEvent<HTMLDivElement>)=>{
     const id = parseInt(event.currentTarget.id.split("-")[0]);
+    const index = parseInt(event.currentTarget.id.split("-")[1]);
     const fetchData = async () =>{
       const response = await fetch('http://127.0.0.1:8000/members', {
         method: "DELETE",
         headers: {
+          "Content-Type": "application/json",
           "access-token": `${sessionStorage.getItem("access_token")}`
         },
         body: JSON.stringify({
@@ -292,6 +336,11 @@ const ProjectPage: React.FC = () => {
       });
       const responseBody = await response.json();
       if(response.ok){
+        setData((prevData) => ({
+          ...prevData,
+          admins: prevData.admins.filter((m,idx) => m.id !== id),
+          members: prevData.members.filter((m,idx) => m.id !== id),
+        }));
         alert("Successfully updated");
       }
       else{
@@ -300,6 +349,44 @@ const ProjectPage: React.FC = () => {
     };
     fetchData();
   }
+
+  function handleAddMember(event: React.MouseEvent<HTMLDivElement>) {
+    const id = event.currentTarget.id.split("-")[0];
+    const fetchData = async ()=>{
+      const response = await fetch('http://127.0.0.1:8000/members', {
+        method:"POST",
+        headers:{
+          "Content-Type": "application/json",
+          "access-token":`${sessionStorage.getItem("access_token")}`,
+
+        },
+        body: JSON.stringify({
+          project_id: parseInt(project_id),
+          user_id: parseInt(id),
+          role: "member"
+        })
+      });
+      if(response.ok){
+        const responseBody = await response.json();
+        console.log(responseBody);
+        setData((prevData) => ({
+          ...prevData,
+          members: [...prevData.members, responseBody]
+        }));
+      }
+      else{
+        const responseBody = await response.json();
+        if(responseBody.detail == "MemberAlreadyExists")
+          alert("Member already exists");
+      }
+      
+    };
+    fetchData();
+    setSearchText("");
+    setShowSearchResults(false);
+
+  }
+
 
   function getUserTimezone() {
     const options: Intl.DateTimeFormatOptions = { timeZoneName: 'short' };
@@ -313,7 +400,6 @@ const ProjectPage: React.FC = () => {
   
   function formatDateTimeToUserTimezone(datetimeString: string): string {
     const { timeZoneName, resolvedTimeZone } = getUserTimezone();
-    
     // Parse the UTC date string
     const utcDate = new Date(datetimeString + 'Z'); // Append 'Z' to ensure UTC interpretation
     
@@ -564,12 +650,8 @@ const ProjectPage: React.FC = () => {
                       <div
                         key={result.id}
                         className="p-2 hover:bg-gray-100 cursor-pointer"
-                        onClick={() => {
-                          // Handle user selection here
-                          console.log("Selected user:", result);
-                          setSearchText("");
-                          setShowSearchResults(false);
-                        }}
+                        onClick={handleAddMember}
+                        id={result.id+'-add'}
                       >
                         <div className="flex items-center">
                           <img
@@ -601,31 +683,40 @@ const ProjectPage: React.FC = () => {
                 <div className='bg-slate-800 text-white p-2 rounded'>Owner</div>
               </div>
               <hr />
-              {data.admins.map((admin) => (
-                <div className='flex flex-row gap-4 items-center my-4 justify-between' key={admin.id}>
-                  <div className='flex flex-row justify-center items-center gap-6'>
-                    <div>
-                      <img
-                        src={admin.profile_pic}
-                        className='object-cover w-10 h-10 rounded-full'
-                      />
+              {data.admins.map((admin, index) => (
+                <div key={admin.id}>
+                <div className='flex flex-row gap-4 items-center my-4 justify-between'>
+                  <div className='flex flex-row gap-6 items-center'>
+                    <div className='w-10 h-10 rounded-full'>
+                      <img src={admin.profile_pic} className='object-cover' />
                     </div>
                     <div>@ {admin.username}</div>
                   </div>
-                  <div className='bg-slate-600 text-white p-2 rounded'>Admin</div>
-                  <div
-                    className='text-red-600 font-bold'
-                    onClick={handleRevokePermissions}
-                    id={admin.id.toString() + '-revoke'}
-                  >
-                    Revoke
+                  <div className='flex flex-row gap-6 items-center'>
+                    <div className='bg-slate-600 text-white p-2 rounded'>
+                      Admin
+                    </div>
+                    <div
+                      className='text-red-600 font-bold'
+                      onClick={handleRevokePermissions}
+                      id={admin.id+'-'+index+'-revoke'}
+                    >
+                      Revoke
+                    </div>
+                    <div
+                      className='text-red-600 font-bold'
+                      onClick={handleRemoveUser}
+                      id={admin.id+'-'+index + '-remove'}
+                    >
+                      Remove
+                    </div>
                   </div>
-                  <div className='text-red-600 font-bold'>Remove</div>
-                  <hr />
                 </div>
+                <hr />
+              </div>
               ))}
               <div>
-                {data.members.map((member) => (
+                {data.members.map((member, index) => (
                   <div key={member.id}>
                     <div className='flex flex-row gap-4 items-center my-4 justify-between'>
                       <div className='flex flex-row gap-6 items-center'>
@@ -641,14 +732,14 @@ const ProjectPage: React.FC = () => {
                         <div
                           className='text-red-600 font-bold'
                           onClick={handlePromotePermissions}
-                          id={member.id + '-promote'}
+                          id={member.id+'-'+index + '-promote'}
                         >
                           Promote
                         </div>
                         <div
                           className='text-red-600 font-bold'
                           onClick={handleRemoveUser}
-                          id={member.id + '-remove'}
+                          id={member.id+'-'+index + '-remove'}
                         >
                           Remove
                         </div>

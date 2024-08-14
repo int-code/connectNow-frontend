@@ -10,7 +10,6 @@ type Props = {
 
 const ComponentHeader: React.FC<Props> = ({ route }) => {
   const { user } = useUser();
-  console.log("USER",user);
   const handleLogout = (event: React.MouseEvent<HTMLButtonElement>) => {
     sessionStorage.clear();
     window.location.href = "/";
@@ -33,12 +32,12 @@ const ComponentHeader: React.FC<Props> = ({ route }) => {
             </Button>
           </div>
         ) : (
-          route === 'signup' ? (
+          route === '/signup' ? (
             <>
               <Button className='mr-4 border-white border text-white font-medium text-lg px-6 py-2'>Sign up</Button>
               <Button href="/login" className="text-white font-medium text-lg px-6 py-2">Log in</Button>
             </>
-          ) : route === 'login' ? (
+          ) : route === '/login' ? (
             <>
               <Button href="/signup" className="text-white font-medium text-lg px-6 py-2">Sign up</Button>
               <Button className='ml-4 border-white border text-white font-medium text-lg px-6 py-2'>Log in</Button>
@@ -58,7 +57,7 @@ const ComponentHeader: React.FC<Props> = ({ route }) => {
             key={item}
             href={item === '' ? '/' : `/${item}`}
             active={route === item}
-            className={`text-lg font-medium ${route === item ? 'text-blue-500' : 'text-white'} hover:text-blue-400`}
+            className={`text-lg font-medium ${route === '/'+item ? 'text-blue-500' : 'text-white'} hover:text-blue-400`}
           >
             {item === '' ? 'Home' : item === 'project' ? "Browse" : item.charAt(0).toUpperCase() + item.slice(1)}
           </Navbar.Link>

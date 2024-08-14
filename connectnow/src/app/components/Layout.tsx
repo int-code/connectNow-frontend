@@ -4,15 +4,21 @@
 import React, { ReactNode } from 'react';
 import { UserProvider } from '../context/UserContext';
 import ComponentHeader from './ComponentHeader'; // Assuming ComponentHeader should be used here
+import { usePathname } from 'next/navigation';
+
 
 interface LayoutProps {
   children: ReactNode;
 }
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+
+  const pathname = usePathname();
+  console.log(pathname);
+
   return (
     <UserProvider>
-      <ComponentHeader route="" /> {/* Pass the route prop dynamically if needed */}
+      <ComponentHeader route={pathname} /> {/* Pass the route prop dynamically if needed */}
       <main>{children}</main>
     </UserProvider>
   );
