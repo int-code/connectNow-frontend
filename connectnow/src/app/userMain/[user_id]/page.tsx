@@ -90,7 +90,7 @@ const ProjectPage: React.FC = () => {
 
       try {
         // Fetch user data
-        let response = await fetch(`https://connectnow-backend-fwe9.onrender.com//user/${user_id}`, {
+        let response = await fetch(`https://connectnow-backend-fwe9.onrender.com/user/${user_id}`, {
           headers: {
             "access-token": accessToken || '',
           },
@@ -99,7 +99,7 @@ const ProjectPage: React.FC = () => {
           // Handle token refresh
           const refreshToken = sessionStorage.getItem("refresh_token");
           if (refreshToken) {
-            const refreshResponse = await fetch(`https://connectnow-backend-fwe9.onrender.com//auth/refresh/?refresh_token=${refreshToken}`, {
+            const refreshResponse = await fetch(`https://connectnow-backend-fwe9.onrender.com/auth/refresh/?refresh_token=${refreshToken}`, {
               method: "POST",
             });
 
@@ -109,7 +109,7 @@ const ProjectPage: React.FC = () => {
             sessionStorage.setItem("access_token", refreshData.access_token);
 
             // Retry fetching user data
-            response = await fetch(`https://connectnow-backend-fwe9.onrender.com//user/${user_id}`, {
+            response = await fetch(`https://connectnow-backend-fwe9.onrender.com/user/${user_id}`, {
               headers: {
                 "access-token": refreshData.access_token,
               },
@@ -123,7 +123,7 @@ const ProjectPage: React.FC = () => {
         }
 
         // Fetch user projects
-        response = await fetch(`https://connectnow-backend-fwe9.onrender.com//project/user/${user_id}`, {
+        response = await fetch(`https://connectnow-backend-fwe9.onrender.com/project/user/${user_id}`, {
           headers: {
             "access-token": sessionStorage.getItem("access_token") || '',
           },
@@ -132,7 +132,7 @@ const ProjectPage: React.FC = () => {
           // Handle token refresh again if needed
           const refreshToken = sessionStorage.getItem("refresh_token");
           if (refreshToken) {
-            const refreshResponse = await fetch(`https://connectnow-backend-fwe9.onrender.com//auth/refresh/?refresh_token=${refreshToken}`, {
+            const refreshResponse = await fetch(`https://connectnow-backend-fwe9.onrender.com/auth/refresh/?refresh_token=${refreshToken}`, {
               method: "POST",
             });
 
@@ -142,7 +142,7 @@ const ProjectPage: React.FC = () => {
             sessionStorage.setItem("access_token", refreshData.access_token);
 
             // Retry fetching user projects
-            response = await fetch(`https://connectnow-backend-fwe9.onrender.com//project/user/${user_id}`, {
+            response = await fetch(`https://connectnow-backend-fwe9.onrender.com/project/user/${user_id}`, {
               headers: {
                 "access-token": refreshData.access_token,
               },
@@ -154,7 +154,7 @@ const ProjectPage: React.FC = () => {
         if (!userProjectsData.detail) {
           setUserProject(userProjectsData);
         }
-        response = await fetch(`https://connectnow-backend-fwe9.onrender.com//skill/user/${user_id}`, {
+        response = await fetch(`https://connectnow-backend-fwe9.onrender.com/skill/user/${user_id}`, {
           headers: {
             "access-token": accessToken || '',
           },
@@ -163,7 +163,7 @@ const ProjectPage: React.FC = () => {
           // Handle token refresh
           const refreshToken = sessionStorage.getItem("refresh_token");
           if (refreshToken) {
-            const refreshResponse = await fetch(`https://connectnow-backend-fwe9.onrender.com//auth/refresh/?refresh_token=${refreshToken}`, {
+            const refreshResponse = await fetch(`https://connectnow-backend-fwe9.onrender.com/auth/refresh/?refresh_token=${refreshToken}`, {
               method: "POST",
             });
 
@@ -173,7 +173,7 @@ const ProjectPage: React.FC = () => {
             sessionStorage.setItem("access_token", refreshData.access_token);
 
             // Retry fetching user data
-            response = await fetch(`https://connectnow-backend-fwe9.onrender.com//skill/user/${user_id}`, {
+            response = await fetch(`https://connectnow-backend-fwe9.onrender.com/skill/user/${user_id}`, {
               headers: {
                 "access-token": refreshData.access_token,
               },

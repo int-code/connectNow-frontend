@@ -25,7 +25,7 @@ export const UserProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     const fetchUser = async () => {
       const token = sessionStorage.getItem('access_token');
       if (token) {
-        const response = await fetch('https://connectnow-backend-fwe9.onrender.com//user/', {
+        const response = await fetch('https://connectnow-backend-fwe9.onrender.com/user/', {
           headers: {
             "access-token": `${token}`,
           },

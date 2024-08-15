@@ -28,7 +28,7 @@ const UserDetailsPage: React.FC = () => {
     if(!access_token)
       window.location.href = "/login";
     const fetchUserDetails = async () =>{
-      const response = await fetch("https://connectnow-backend-fwe9.onrender.com//user", {
+      const response = await fetch("https://connectnow-backend-fwe9.onrender.com/user", {
         headers:{
           "access-token": `${access_token}`,
         }
@@ -58,7 +58,7 @@ const UserDetailsPage: React.FC = () => {
   const handleDeleteAccount = () => {
     if (window.confirm('Are you sure you want to delete your account? This action cannot be undone.')) {
       const deleteAccount = async ()=>{
-        const response = await fetch("https://connectnow-backend-fwe9.onrender.com//user", {
+        const response = await fetch("https://connectnow-backend-fwe9.onrender.com/user", {
           method: "DELETE",
           headers: {
             "access-token": `${sessionStorage.getItem("access_token")}`,
