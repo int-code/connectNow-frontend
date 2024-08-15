@@ -1,10 +1,10 @@
 "use client";
 import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import PageLoader from '@/app/components/PageLoader';
-import AppFooter from '@/app/components/AppFooter';
-import ComponentHeader from '@/app/components/ComponentHeader';
-import ProjectCard from '@/app/components/ProjectCard';
+import PageLoader from '../../components/PageLoader';
+import AppFooter from '../../components/AppFooter';
+import ComponentHeader from '../../components/ComponentHeader';
+import ProjectCard from '../../components/ProjectCard';
 
 
 interface Project {
