@@ -79,7 +79,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch('http://152.42.222.73/api/connectnow/auth/forgot-password', {
+      const response = await fetch('https://connectnow-backend-fwe9.onrender.com//auth/forgot-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -120,7 +120,7 @@ export default function Login() {
     }
 
     try {
-      const response = await fetch('http://152.42.222.73/api/connectnow/auth/reset-password', {
+      const response = await fetch('https://connectnow-backend-fwe9.onrender.com//auth/reset-password', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -167,7 +167,7 @@ export default function Login() {
         formStyleData.append("username", formValues.username);
         formStyleData.append("password", formValues.password);
         try {
-          const response = await fetch('http://152.42.222.73/api/connectnow/auth/token', {
+          const response = await fetch('https://connectnow-backend-fwe9.onrender.com//auth/token', {
             method: 'POST',
             body: formStyleData
           });

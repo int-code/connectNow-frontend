@@ -137,7 +137,7 @@ const ProjectPage: React.FC = () => {
         if(settingsForm.projectPic)
           formData.append("pic", settingsForm.projectPic);
       }
-      const response = await fetch(`http://152.42.222.73/api/connectnow/project/${project_id}`, {
+      const response = await fetch(`https://connectnow-backend-fwe9.onrender.com//project/${project_id}`, {
         method: "POST",
         headers:{
           "access-token": `${sessionStorage.getItem("access_token")}`
@@ -154,7 +154,7 @@ const ProjectPage: React.FC = () => {
         if(settingsForm && data){
           data.project.name = settingsForm.projectName;
           data.project.description = settingsForm.projectDesc?settingsForm.projectDesc:"";
-          data.project.pic_url = settingsForm.projectPicUrl?settingsForm.projectPicUrl:"http://152.42.222.73/api/connectnow/profile_pic/default_user.jpg"
+          data.project.pic_url = settingsForm.projectPicUrl?settingsForm.projectPicUrl:"https://connectnow-backend-fwe9.onrender.com//profile_pic/default_user.jpg"
         }
       }
       setSettingView(false);
@@ -190,7 +190,7 @@ const ProjectPage: React.FC = () => {
 
   const handleDeleteProject = ()=>{
     const fetchData = async ()=>{
-      const response = await fetch(`http://152.42.222.73/api/connectnow/project/${data?.project.id}`, {
+      const response = await fetch(`https://connectnow-backend-fwe9.onrender.com//project/${data?.project.id}`, {
         headers:{
           "access-token": `${sessionStorage.getItem("access_token")}`
         },
@@ -222,7 +222,7 @@ const ProjectPage: React.FC = () => {
     const id = parseInt(event.currentTarget.id.split("-")[0]);
     const index = parseInt(event.currentTarget.id.split("-")[1]);
     const fetchData = async () =>{
-      const response = await fetch('http://152.42.222.73/api/connectnow/members', {
+      const response = await fetch('https://connectnow-backend-fwe9.onrender.com//members', {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -254,7 +254,7 @@ const ProjectPage: React.FC = () => {
     const id = parseInt(event.currentTarget.id.split("-")[0]);
     const index = parseInt(event.currentTarget.id.split("-")[1]);
     const fetchData = async () =>{
-      const response = await fetch('http://152.42.222.73/api/connectnow/members', {
+      const response = await fetch('https://connectnow-backend-fwe9.onrender.com//members', {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -290,7 +290,7 @@ const ProjectPage: React.FC = () => {
     if (value) {
       const fetchData = async () => {
         try {
-          const response = await fetch(`http://152.42.222.73/api/connectnow/user/search/${value}`, {
+          const response = await fetch(`https://connectnow-backend-fwe9.onrender.com//user/search/${value}`, {
             headers: {
               "access-token": `${sessionStorage.getItem("access_token")}`
             }
@@ -322,7 +322,7 @@ const ProjectPage: React.FC = () => {
     const id = parseInt(event.currentTarget.id.split("-")[0]);
     const index = parseInt(event.currentTarget.id.split("-")[1]);
     const fetchData = async () =>{
-      const response = await fetch('http://152.42.222.73/api/connectnow/members', {
+      const response = await fetch('https://connectnow-backend-fwe9.onrender.com//members', {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
@@ -353,7 +353,7 @@ const ProjectPage: React.FC = () => {
   function handleAddMember(event: React.MouseEvent<HTMLDivElement>) {
     const id = event.currentTarget.id.split("-")[0];
     const fetchData = async ()=>{
-      const response = await fetch('http://152.42.222.73/api/connectnow/members', {
+      const response = await fetch('https://connectnow-backend-fwe9.onrender.com//members', {
         method:"POST",
         headers:{
           "Content-Type": "application/json",
@@ -422,7 +422,7 @@ const ProjectPage: React.FC = () => {
   
   useEffect(() => {
     if (project_id) {
-      fetch(`http://152.42.222.73/api/connectnow/project/${project_id}`, {
+      fetch(`https://connectnow-backend-fwe9.onrender.com//project/${project_id}`, {
         headers: {
           "access-token": `${sessionStorage.getItem("access_token")}`,
         }

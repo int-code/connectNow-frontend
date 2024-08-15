@@ -70,7 +70,7 @@ export default function Dashboard() {
       formData.append("description", projectDesc);
     if(projectPic)
       formData.append("pic", projectPic);
-    fetch("http://152.42.222.73/api/connectnow/project", {
+    fetch("https://connectnow-backend-fwe9.onrender.com//project", {
       method: "POST",
       headers: {
         "access-token": `${access_token}`,
@@ -80,12 +80,12 @@ export default function Dashboard() {
     .then((response) => {
       if(response.status==401){
         const refresh_token = sessionStorage.getItem("refresh_token");
-        fetch(`http://152.42.222.73/api/connectnow/auth/refresh/?refresh_token=${refresh_token}`, {
+        fetch(`https://connectnow-backend-fwe9.onrender.com//auth/refresh/?refresh_token=${refresh_token}`, {
           method: "POST"
         }).then((response)=> response.json())
         .then((data) =>{
           sessionStorage.setItem("access_token", data.access_token);
-          fetch("http://152.42.222.73/api/connectnow/project", {
+          fetch("https://connectnow-backend-fwe9.onrender.com//project", {
             method: "POST",
             headers: {
               "access-token": `${data.access_token}`,
@@ -117,7 +117,7 @@ export default function Dashboard() {
       window.location.href = "/";
     } else {
       // Fetch user info
-      fetch("http://152.42.222.73/api/connectnow/project/me", {
+      fetch("https://connectnow-backend-fwe9.onrender.com//project/me", {
         headers: {
           "access-token": `${access_token}`,
         },
@@ -125,12 +125,12 @@ export default function Dashboard() {
         .then((response) =>{
           if(response.status==401){
             const refresh_token = sessionStorage.getItem("refresh_token");
-            fetch(`http://152.42.222.73/api/connectnow/auth/refresh/?refresh_token=${refresh_token}`, {
+            fetch(`https://connectnow-backend-fwe9.onrender.com//auth/refresh/?refresh_token=${refresh_token}`, {
               method: "POST"
             }).then((response)=> response.json())
             .then((data) =>{
               sessionStorage.setItem("access_token", data.access_token);
-              fetch("http://152.42.222.73/api/connectnow/project/me", {
+              fetch("https://connectnow-backend-fwe9.onrender.com//project/me", {
                 headers: {
                   "access-token": `${access_token}`,
                 },
@@ -154,7 +154,7 @@ export default function Dashboard() {
     }
     const fetchData = async () => {
       try{
-        const response = await fetch("http://152.42.222.73/api/connectnow/user", {
+        const response = await fetch("https://connectnow-backend-fwe9.onrender.com//user", {
           headers:{
             "access-token": `${access_token}`
           }
