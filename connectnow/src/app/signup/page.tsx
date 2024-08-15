@@ -12,7 +12,7 @@ interface FormValues {
   email: string;
   password: string;
   confirmPassword: string;
-  verificationCode?: string;
+  verificationCode: string;
 }
 
 interface FormErrors {
@@ -153,7 +153,7 @@ const Signup: React.FC<Props> = () => {
             },
             body: JSON.stringify({
               email: formValues.email,
-              code: formValues.verificationCode,
+              code: parseInt(formValues.verificationCode),
               password: formValues.password,
               username: formValues.username
             }),
